@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution Folder", "{142F0C5A-8AC8-436D-8D58-D09C48320015}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		global.json = global.json
+		nuget.config = nuget.config
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGame.IMEHelper", "MonoGame.IMEHelper\MonoGame.IMEHelper.csproj", "{7366386B-354B-4C86-9259-28CFCEF9807D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		ReleaseGL|Any CPU = ReleaseGL|Any CPU
+		DebugDX|Any CPU = DebugDX|Any CPU
+		DebugGL|Any CPU = DebugGL|Any CPU
+		ReleaseDX|Any CPU = ReleaseDX|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7366386B-354B-4C86-9259-28CFCEF9807D}.ReleaseGL|Any CPU.ActiveCfg = ReleaseGL|Any CPU
+		{7366386B-354B-4C86-9259-28CFCEF9807D}.ReleaseGL|Any CPU.Build.0 = ReleaseGL|Any CPU
+		{7366386B-354B-4C86-9259-28CFCEF9807D}.DebugDX|Any CPU.ActiveCfg = DebugDX|Any CPU
+		{7366386B-354B-4C86-9259-28CFCEF9807D}.DebugDX|Any CPU.Build.0 = DebugDX|Any CPU
+		{7366386B-354B-4C86-9259-28CFCEF9807D}.DebugGL|Any CPU.ActiveCfg = DebugGL|Any CPU
+		{7366386B-354B-4C86-9259-28CFCEF9807D}.DebugGL|Any CPU.Build.0 = DebugGL|Any CPU
+		{7366386B-354B-4C86-9259-28CFCEF9807D}.ReleaseDX|Any CPU.ActiveCfg = ReleaseDX|Any CPU
+		{7366386B-354B-4C86-9259-28CFCEF9807D}.ReleaseDX|Any CPU.Build.0 = ReleaseDX|Any CPU
+	EndGlobalSection
+EndGlobal
