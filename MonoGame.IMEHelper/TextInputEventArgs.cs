@@ -1,16 +1,11 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework.Input;
 
 namespace MonoGame.IMEHelper;
 
-public class TextInputEventArgs : EventArgs
+public class TextInputEventArgs(char character, Keys key = Keys.None) : EventArgs
 {
-    public TextInputEventArgs(char character, Keys key = Keys.None)
-    {
-        Character = character;
-        Key = key;
-    }
-
-    public readonly char Character;
-    public readonly Keys Key;
+    public char Character { get; } = character;
+    public Keys Key { get; } = key;
 }

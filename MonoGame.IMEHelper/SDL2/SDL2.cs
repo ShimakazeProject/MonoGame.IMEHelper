@@ -1,23 +1,11 @@
-﻿using System;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace MonoGame.IMEHelper;
 
-internal static class Sdl
+
+internal static partial class Sdl
 {
-    private static readonly IntPtr NativeLibrary = GetNativeLibrary();
-
-    private static IntPtr GetNativeLibrary()
-    {
-        return CurrentPlatform.OS switch
-        {
-            OS.Windows => FuncLoader.LoadLibraryExt("SDL2.dll"),
-            OS.Linux => FuncLoader.LoadLibraryExt("libSDL2-2.0.so.0"),
-            OS.MacOSX => FuncLoader.LoadLibraryExt("libSDL2-2.0.0.dylib"),
-            _ => FuncLoader.LoadLibraryExt("sdl2")
-        };
-    }
-
     [StructLayout(LayoutKind.Sequential)]
     public struct Rectangle
     {
@@ -27,15 +15,15 @@ internal static class Sdl
         public int Height;
     }
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void DSdlStartTextInput();
-    public static readonly DSdlStartTextInput? StartTextInput = FuncLoader.LoadFunction<DSdlStartTextInput>(NativeLibrary, "SDL_StartTextInput");
+    [LibraryImport("SDL2", EntryPoint = "SDL_StartTextInput")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void StartTextInput();
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void DSdlStopTextInput();
-    public static readonly DSdlStopTextInput? StopTextInput = FuncLoader.LoadFunction<DSdlStopTextInput>(NativeLibrary, "SDL_StopTextInput");
+    [LibraryImport("SDL2", EntryPoint = "SDL_StopTextInput")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void StopTextInput();
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void DSdlSetTextInputRect(ref Rectangle rect);
-    public static readonly DSdlSetTextInputRect? SetTextInputRect = FuncLoader.LoadFunction<DSdlSetTextInputRect>(NativeLibrary, "SDL_SetTextInputRect");
+    [LibraryImport("SDL2", EntryPoint = "SDL_SetTextInputRect")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void SetTextInputRect(ref Rectangle rect);
 }

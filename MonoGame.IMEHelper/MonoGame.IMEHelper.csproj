@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Configurations>
@@ -12,8 +12,6 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>12</LangVersion>
 
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -36,6 +34,7 @@
     <UseWindowsForms Condition="$(Configuration.Contains(Windows))">true</UseWindowsForms>
 
     <DefineConstants>$(DefineConstants);$(Engine.ToUpperInvariant())</DefineConstants>
+    <DefineConstants Condition="'$(UseWindowsForms)' == 'true'">$(DefineConstants);WINFORMS</DefineConstants>
 
     <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
@@ -48,6 +47,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>Shimakaze.MonoGame.IMEHelper.$(Engine)</PackageId>
     <PackageId Condition="'$(ClientConfiguration)' == 'Debug'">$(PackageId).Debug</PackageId>
     <RootNamespace>MonoGame.IMEHelper</RootNamespace>
@@ -59,6 +60,12 @@
     <RepositoryUrl>https://github.com/ShimakazeProject/MonoGame.IMEHelpergit</RepositoryUrl>
     <Authors>frg2089 &amp; ryancheung</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageOutputPath>..\nuget</PackageOutputPath>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(UseWindowsForms)' == 'true'">
