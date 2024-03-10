@@ -33,6 +33,7 @@
 
     <UseWindowsForms Condition="$(Configuration.Contains(Windows))">true</UseWindowsForms>
 
+    <DefineConstants>$(DefineConstants);$(ClientConfiguration.ToUpperInvariant())</DefineConstants>
     <DefineConstants>$(DefineConstants);$(Engine.ToUpperInvariant())</DefineConstants>
     <DefineConstants Condition="'$(UseWindowsForms)' == 'true'">$(DefineConstants);WINFORMS</DefineConstants>
 
@@ -77,14 +78,15 @@
 
   <!-- Polyfill -->
   <ItemGroup Condition="$(TargetFrameworkIdentifier) == '.NETFramework'">
+    <PackageReference Include="Polyfill" Version="2.2.0" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="SDL2\*.cs" Condition="'$(UseWindowsForms)' == 'true'" />
-    <Compile Remove="WinForms\*.cs" Condition="'$(UseWindowsForms)' != 'true'" />
-    <None Include="SDL2\*.cs" Condition="'$(UseWindowsForms)' == 'true'" />
-    <None Include="WinForms\*.cs" Condition="'$(UseWindowsForms)' != 'true'" />
+    <Compile Remove="SDL2\*.cs" Condition="!$(Engine.EndsWith('GL'))" />
+    <Compile Remove="WinForms\*.cs" Condition="$(Engine.EndsWith('GL'))" />
+    <None Include="SDL2\*.cs" Condition="!$(Engine.EndsWith('GL'))" />
+    <None Include="WinForms\*.cs" Condition="$(Engine.EndsWith('GL'))" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(MonoGameFramework)' != 'XNA'">
