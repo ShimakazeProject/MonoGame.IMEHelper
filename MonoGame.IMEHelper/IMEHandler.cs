@@ -9,15 +9,14 @@ namespace MonoGame.IMEHelper;
 
 public abstract class IMEHandler(Game game)
 {
-    public static IMEHandler Create(Game game) =>
-        //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        //    return new WindowsIMEHandler(game);
-
+    public static IMEHandler Create(Game game)
+    {
 #if WINDOWSDX || WINDOWSXNA
-        new WinFormsIMEHandler(game);
+        return new WinFormsIMEHandler(game);
 #else
         return new SdlIMEHandler(game);
 #endif
+    }
 
 
     /// <summary>
