@@ -1,44 +1,41 @@
 ﻿using System;
-using System.IO;
 using System.Runtime.InteropServices;
 
-namespace MonoGame.IMEHelper
+namespace MonoGame.IMEHelper;
+
+internal static class Sdl
 {
-    internal static class Sdl
+    private static readonly IntPtr NativeLibrary = GetNativeLibrary();
+
+    private static IntPtr GetNativeLibrary()
     {
-        public static IntPtr NativeLibrary = GetNativeLibrary();
-
-        private static IntPtr GetNativeLibrary()
+        return CurrentPlatform.OS switch
         {
-            if (CurrentPlatform.OS == OS.Windows)
-                return FuncLoader.LoadLibraryExt("SDL2.dll");
-            else if (CurrentPlatform.OS == OS.Linux)
-                return FuncLoader.LoadLibraryExt("libSDL2-2.0.so.0");
-            else if (CurrentPlatform.OS == OS.MacOSX)
-                return FuncLoader.LoadLibraryExt("libSDL2-2.0.0.dylib");
-            else
-                return FuncLoader.LoadLibraryExt("sdl2");
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Rectangle
-        {
-            public int X;
-            public int Y;
-            public int Width;
-            public int Height;
-        }
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void d_sdl_starttextinput();
-        public static d_sdl_starttextinput StartTextInput = FuncLoader.LoadFunction<d_sdl_starttextinput>(NativeLibrary, "SDL_StartTextInput");
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void d_sdl_stoptextinput();
-        public static d_sdl_stoptextinput StopTextInput = FuncLoader.LoadFunction<d_sdl_stoptextinput>(NativeLibrary, "SDL_StopTextInput");
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void d_sdl_settextinputrect(ref Rectangle rect);
-        public static d_sdl_settextinputrect SetTextInputRect = FuncLoader.LoadFunction<d_sdl_settextinputrect>(NativeLibrary, "SDL_SetTextInputRect");
+            OS.Windows => FuncLoader.LoadLibraryExt("SDL2.dll"),
+            OS.Linux => FuncLoader.LoadLibraryExt("libSDL2-2.0.so.0"),
+            OS.MacOSX => FuncLoader.LoadLibraryExt("libSDL2-2.0.0.dylib"),
+            _ => FuncLoader.LoadLibraryExt("sdl2")
+        };
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Rectangle
+    {
+        public int X;
+        public int Y;
+        public int Width;
+        public int Height;
+    }
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void DSdlStartTextInput();
+    public static readonly DSdlStartTextInput? StartTextInput = FuncLoader.LoadFunction<DSdlStartTextInput>(NativeLibrary, "SDL_StartTextInput");
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void DSdlStopTextInput();
+    public static readonly DSdlStopTextInput? StopTextInput = FuncLoader.LoadFunction<DSdlStopTextInput>(NativeLibrary, "SDL_StopTextInput");
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void DSdlSetTextInputRect(ref Rectangle rect);
+    public static readonly DSdlSetTextInputRect? SetTextInputRect = FuncLoader.LoadFunction<DSdlSetTextInputRect>(NativeLibrary, "SDL_SetTextInputRect");
 }

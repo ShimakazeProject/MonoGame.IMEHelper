@@ -9,91 +9,67 @@ namespace MonoGame.IMEHelper;
 
 internal static class CurrentPlatform
 {
-    private static bool init;
-    private static OS os;
+    private static OS? s_os;
 
+    // ReSharper disable once StringLiteralTypo
     [DllImport("libc")]
-    static extern int uname(IntPtr buf);
+    private static extern int uname(IntPtr buf);
 
-    private static void Init()
+    private static OS Init()
     {
-        if (!init)
+        PlatformID pid = Environment.OSVersion.Platform;
+
+        switch (pid)
         {
-            PlatformID pid = Environment.OSVersion.Platform;
+            case PlatformID.Win32NT:
+            case PlatformID.Win32S:
+            case PlatformID.Win32Windows:
+            case PlatformID.WinCE:
+                return OS.Windows;
+            case PlatformID.MacOSX:
+                return OS.MacOSX;
+            case PlatformID.Unix:
 
-            switch (pid)
-            {
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                    os = OS.Windows;
-                    break;
-                case PlatformID.MacOSX:
-                    os = OS.MacOSX;
-                    break;
-                case PlatformID.Unix:
+                // Mac can return a value of Unix sometimes, We need to double check it.
+                IntPtr buf = IntPtr.Zero;
+                try
+                {
+                    buf = Marshal.AllocHGlobal(8192);
 
-                    // Mac can return a value of Unix sometimes, We need to double check it.
-                    IntPtr buf = IntPtr.Zero;
-                    try
+                    if (uname(buf) == 0)
                     {
-                        buf = Marshal.AllocHGlobal(8192);
-
-                        if (uname(buf) == 0)
-                        {
-                            string sos = Marshal.PtrToStringAnsi(buf);
-                            if (sos == "Darwin")
-                            {
-                                os = OS.MacOSX;
-                                return;
-                            }
-                        }
+                        string? sos = Marshal.PtrToStringAnsi(buf);
+                        if (sos == "Darwin")
+                            return OS.MacOSX;
                     }
-                    catch
-                    {
-                        // ignored
-                    }
-                    finally
-                    {
-                        if (buf != IntPtr.Zero)
-                            Marshal.FreeHGlobal(buf);
-                    }
+                }
+                catch
+                {
+                    // ignored
+                }
+                finally
+                {
+                    if (buf != IntPtr.Zero)
+                        Marshal.FreeHGlobal(buf);
+                }
 
-                    os = OS.Linux;
-                    break;
-                default:
-                    os = OS.Unknown;
-                    break;
-            }
-
-            init = true;
+                return OS.Linux;
+            case PlatformID.Xbox:
+            case PlatformID.Other:
+            default:
+                return OS.Unknown;
         }
     }
 
-    public static OS OS
-    {
-        get
-        {
-            Init();
-            return os;
-        }
-    }
+    // ReSharper disable once InconsistentNaming
+    public static OS OS => s_os ??= Init();
 
-    public static string Rid
+    public static string Rid => OS switch
     {
-        get
-        {
-            if (CurrentPlatform.OS == OS.Windows && Environment.Is64BitProcess)
-                return "win-x64";
-            else if (CurrentPlatform.OS == OS.Windows && !Environment.Is64BitProcess)
-                return "win-x86";
-            else if (CurrentPlatform.OS == OS.Linux)
-                return "linux-x64";
-            else if (CurrentPlatform.OS == OS.MacOSX)
-                return "osx";
-            else
-                return "unknown";
-        }
-    }
+        OS.Windows when Environment.Is64BitProcess => "win-x64",
+        OS.Windows when !Environment.Is64BitProcess => "win-x86",
+        OS.Linux => "linux-x64",
+        OS.MacOSX => "osx",
+        _ => "unknown"
+    };
 }

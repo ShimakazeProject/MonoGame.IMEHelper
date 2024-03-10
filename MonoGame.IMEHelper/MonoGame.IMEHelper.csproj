@@ -3,24 +3,28 @@
     <PropertyGroup>
         <TargetFramework Condition="'$(Configuration)' == 'DebugGL' OR '$(Configuration)' == 'ReleaseGL'">net6.0</TargetFramework>
         <TargetFrameworks Condition="'$(Configuration)' == 'DebugDX' OR '$(Configuration)' == 'ReleaseDX'">net6.0-windows;net48</TargetFrameworks>
+        <TargetFrameworks Condition="'$(Configuration)' == 'DebugXNA' OR '$(Configuration)' == 'ReleaseXNA'">net6.0-windows;net48</TargetFrameworks>
         <ImplicitUsings>disable</ImplicitUsings>
         <LangVersion>10</LangVersion>
-        <Configurations>DebugDX;DebugGL;ReleaseDX;ReleaseGL</Configurations>
+        <Configurations>DebugDX;DebugGL;ReleaseDX;ReleaseGL;DebugXNA;ReleaseXNA</Configurations>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <Platforms>AnyCPU</Platforms>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <PropertyGroup>
         <MonoGameFramework Condition="'$(Configuration)' == 'DebugDX' OR '$(Configuration)' == 'ReleaseDX'">WindowsDX</MonoGameFramework>
         <MonoGameFramework Condition="'$(Configuration)' == 'DebugGL' OR '$(Configuration)' == 'ReleaseGL'">DesktopGL</MonoGameFramework>
+        <MonoGameFramework Condition="'$(Configuration)' == 'DebugXNA' OR '$(Configuration)' == 'ReleaseXNA'">XNA</MonoGameFramework>
         <MonoGameFramework Condition="'$(MonoGameFramework)' == ''">WindowsDX</MonoGameFramework>
-        <UseWindowsForms Condition="'$(MonoGameFramework)' == 'WindowsDX'">true</UseWindowsForms>
     </PropertyGroup>
 
     <PropertyGroup>
         <PackageId>MonoGame.IMEHelper.$(MonoGameFramework)</PackageId>
         <RootNamespace>MonoGame.IMEHelper</RootNamespace>
         <AssemblyName>MonoGame.IMEHelper</AssemblyName>
+        <PackageVersion>2.0.0</PackageVersion>
 
         <Description>This is a netstandard package with IME implementation of Windows, MacOS and Linux with SDL2.</Description>
         <PackageTags>monogame;</PackageTags>
@@ -31,21 +35,41 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <DefineConstants Condition="'$(MonoGameFramework)' == 'WindowsDX'">TRACE;WINDOWSDX</DefineConstants>
-        <DefineConstants Condition="'$(MonoGameFramework)' == 'DesktopGL'">TRACE;DESKTOPGL</DefineConstants>
+        <UseWindowsForms Condition="'$(MonoGameFramework)' == 'WindowsDX'">true</UseWindowsForms>
+        <UseWindowsForms Condition="'$(MonoGameFramework)' == 'XNA'">true</UseWindowsForms>
+        <DefineConstants Condition="'$(MonoGameFramework)' == 'WindowsDX'">$(DefineConstants);WINDOWSDX</DefineConstants>
+        <DefineConstants Condition="'$(MonoGameFramework)' == 'DesktopGL'">$(DefineConstants);DESKTOPGL</DefineConstants>
+        <DefineConstants Condition="'$(MonoGameFramework)' == 'XNA'">$(DefineConstants);XNA</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'DebugXNA' OR '$(Configuration)' == 'ReleaseXNA' ">
+        <PlatformTarget>x86</PlatformTarget>
+        <Prefer32bit>true</Prefer32bit>
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Remove="DesktopGL\*.cs" Condition="'$(MonoGameFramework)' == 'XNA'" />
         <Compile Remove="DesktopGL\*.cs" Condition="'$(MonoGameFramework)' == 'WindowsDX'" />
         <Compile Remove="WindowsDX\*.cs" Condition="'$(MonoGameFramework)' == 'DesktopGL'" />
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(MonoGameFramework)' != 'XNA'">
         <PackageReference Include="MonoGame.Framework.$(MonoGameFramework)">
             <Version Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">3.8.0.1641</Version>
             <Version Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">3.8.1.303</Version>
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup Condition="'$(MonoGameFramework)' == 'XNA'">
+        <Reference Include="Microsoft.Xna.Framework">
+            <HintPath>..\References\XNA\Microsoft.Xna.Framework.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Xna.Framework.Game">
+            <HintPath>..\References\XNA\Microsoft.Xna.Framework.Game.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Xna.Framework.Graphics">
+            <HintPath>..\References\XNA\Microsoft.Xna.Framework.Graphics.dll</HintPath>
+        </Reference>
+    </ItemGroup>
 
 </Project>

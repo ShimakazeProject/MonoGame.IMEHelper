@@ -1,51 +1,50 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
-namespace MonoGame.IMEHelper
+namespace MonoGame.IMEHelper;
+
+/// <summary>
+/// Integrate IME to DesktopGL(SDL2) platform.
+/// </summary>
+// ReSharper disable once UnusedType.Global
+public class SdlIMEHandler : IMEHandler
 {
-    /// <summary>
-    /// Integrate IME to DesktopGL(SDL2) platform.
-    /// </summary>
-    public class SdlIMEHandler : IMEHandler
+    public SdlIMEHandler(Game game, bool showDefaultIMEWindow = false) : base(game, showDefaultIMEWindow)
     {
-        public SdlIMEHandler(Game game, bool showDefaultIMEWindow = false) : base(game, showDefaultIMEWindow)
-        {
-        }
+    }
 
-        public override bool Enabled { get; protected set; }
+    public override bool Enabled { get; protected set; }
 
-        public override void PlatformInitialize()
-        {
-            GameInstance.Window.TextInput += Window_TextInput;
-        }
+    protected override void PlatformInitialize()
+    {
+        GameInstance.Window.TextInput += Window_TextInput;
+    }
 
-        private void Window_TextInput(object sender, Microsoft.Xna.Framework.TextInputEventArgs e)
-        {
-            OnTextInput(new TextInputEventArgs(e.Character, e.Key));
-        }
+    private void Window_TextInput(object? sender, Microsoft.Xna.Framework.TextInputEventArgs e)
+    {
+        OnTextInput(new TextInputEventArgs(e.Character, e.Key));
+    }
 
-        public override void StartTextComposition()
-        {
-            if (Enabled)
-                return;
+    public override void StartTextComposition()
+    {
+        if (Enabled)
+            return;
 
-            Sdl.StartTextInput?.Invoke();
-            Enabled = true;
-        }
+        Sdl.StartTextInput?.Invoke();
+        Enabled = true;
+    }
 
-        public override void StopTextComposition()
-        {
-            if (!Enabled)
-                return;
+    public override void StopTextComposition()
+    {
+        if (!Enabled)
+            return;
 
-            Sdl.StopTextInput?.Invoke();
-            Enabled = false;
-        }
+        Sdl.StopTextInput?.Invoke();
+        Enabled = false;
+    }
 
-        public override void SetTextInputRect(ref Rectangle rect)
-        {
-            var sdlRect = new Sdl.Rectangle() { X = rect.X, Y = rect.Y, Width = rect.Width, Height = rect.Height };
-            Sdl.SetTextInputRect?.Invoke(ref sdlRect);
-        }
+    public override void SetTextInputRect(ref Rectangle rect)
+    {
+        var sdlRect = new Sdl.Rectangle() { X = rect.X, Y = rect.Y, Width = rect.Width, Height = rect.Height };
+        Sdl.SetTextInputRect?.Invoke(ref sdlRect);
     }
 }
