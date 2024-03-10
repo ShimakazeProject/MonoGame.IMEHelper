@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <XnaFrameworkPath>Path To\Rampastring.XNAUI\References\XNA</XnaFrameworkPath>
+  </PropertyGroup>
+</Project>

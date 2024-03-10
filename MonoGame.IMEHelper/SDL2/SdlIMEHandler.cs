@@ -5,7 +5,6 @@ namespace MonoGame.IMEHelper;
 /// <summary>
 /// Integrate IME to DesktopGL(SDL2) platform.
 /// </summary>
-// ReSharper disable once UnusedType.Global
 public class SdlIMEHandler : IMEHandler
 {
     public SdlIMEHandler(Game game, bool showDefaultIMEWindow = false) : base(game, showDefaultIMEWindow)

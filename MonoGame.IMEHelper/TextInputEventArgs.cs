@@ -11,8 +11,6 @@ public class TextInputEventArgs : EventArgs
         Key = key;
     }
 
-    // ReSharper disable once MemberCanBePrivate.Global
     public readonly char Character;
-    // ReSharper disable once MemberCanBePrivate.Global
     public readonly Keys Key;
 }

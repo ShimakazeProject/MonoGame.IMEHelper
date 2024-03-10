@@ -11,32 +11,57 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGame.IMEHelper", "MonoGame.IMEHelper\MonoGame.IMEHelper.csproj", "{7366386B-354B-4C86-9259-28CFCEF9807D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.IMEHelper", "MonoGame.IMEHelper\MonoGame.IMEHelper.csproj", "{E566A18B-8138-45BD-A505-7286F7FFE499}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		ReleaseGL|Any CPU = ReleaseGL|Any CPU
-		DebugDX|Any CPU = DebugDX|Any CPU
-		DebugGL|Any CPU = DebugGL|Any CPU
-		ReleaseDX|Any CPU = ReleaseDX|Any CPU
-		DebugXNA|Any CPU = DebugXNA|Any CPU
-		ReleaseXNA|Any CPU = ReleaseXNA|Any CPU
+		UniversalGLDebug|Any CPU = UniversalGLDebug|Any CPU
+		UniversalGLDebug|x86 = UniversalGLDebug|x86
+		UniversalGLRelease|Any CPU = UniversalGLRelease|Any CPU
+		UniversalGLRelease|x86 = UniversalGLRelease|x86
+		WindowsDXDebug|Any CPU = WindowsDXDebug|Any CPU
+		WindowsDXDebug|x86 = WindowsDXDebug|x86
+		WindowsDXRelease|Any CPU = WindowsDXRelease|Any CPU
+		WindowsDXRelease|x86 = WindowsDXRelease|x86
+		WindowsGLDebug|Any CPU = WindowsGLDebug|Any CPU
+		WindowsGLDebug|x86 = WindowsGLDebug|x86
+		WindowsGLRelease|Any CPU = WindowsGLRelease|Any CPU
+		WindowsGLRelease|x86 = WindowsGLRelease|x86
+		WindowsXNADebug|Any CPU = WindowsXNADebug|Any CPU
+		WindowsXNADebug|x86 = WindowsXNADebug|x86
+		WindowsXNARelease|Any CPU = WindowsXNARelease|Any CPU
+		WindowsXNARelease|x86 = WindowsXNARelease|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.UniversalGLDebug|Any CPU.ActiveCfg = UniversalGLDebug|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.UniversalGLDebug|Any CPU.Build.0 = UniversalGLDebug|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.UniversalGLDebug|x86.ActiveCfg = UniversalGLDebug|x86
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.UniversalGLRelease|Any CPU.ActiveCfg = UniversalGLRelease|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.UniversalGLRelease|Any CPU.Build.0 = UniversalGLRelease|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.UniversalGLRelease|x86.ActiveCfg = UniversalGLRelease|x86
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsDXDebug|Any CPU.ActiveCfg = WindowsDXDebug|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsDXDebug|Any CPU.Build.0 = WindowsDXDebug|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsDXDebug|x86.ActiveCfg = WindowsDXDebug|x86
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsDXRelease|Any CPU.ActiveCfg = WindowsDXRelease|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsDXRelease|Any CPU.Build.0 = WindowsDXRelease|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsDXRelease|x86.ActiveCfg = WindowsDXRelease|x86
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsGLDebug|Any CPU.ActiveCfg = WindowsGLDebug|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsGLDebug|Any CPU.Build.0 = WindowsGLDebug|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsGLDebug|x86.ActiveCfg = WindowsGLDebug|x86
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsGLRelease|Any CPU.ActiveCfg = WindowsGLRelease|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsGLRelease|Any CPU.Build.0 = WindowsGLRelease|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsGLRelease|x86.ActiveCfg = WindowsGLRelease|x86
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsXNADebug|Any CPU.ActiveCfg = WindowsXNADebug|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsXNADebug|x86.ActiveCfg = WindowsXNADebug|x86
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsXNADebug|x86.Build.0 = WindowsXNADebug|x86
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsXNARelease|Any CPU.ActiveCfg = WindowsXNARelease|Any CPU
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsXNARelease|x86.ActiveCfg = WindowsXNARelease|x86
+		{E566A18B-8138-45BD-A505-7286F7FFE499}.WindowsXNARelease|x86.Build.0 = WindowsXNARelease|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.ReleaseGL|Any CPU.ActiveCfg = ReleaseGL|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.ReleaseGL|Any CPU.Build.0 = ReleaseGL|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.DebugDX|Any CPU.ActiveCfg = DebugDX|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.DebugDX|Any CPU.Build.0 = DebugDX|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.DebugGL|Any CPU.ActiveCfg = DebugGL|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.DebugGL|Any CPU.Build.0 = DebugGL|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.ReleaseDX|Any CPU.ActiveCfg = ReleaseDX|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.ReleaseDX|Any CPU.Build.0 = ReleaseDX|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.DebugXNA|Any CPU.ActiveCfg = DebugXNA|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.DebugXNA|Any CPU.Build.0 = DebugXNA|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.ReleaseXNA|Any CPU.ActiveCfg = ReleaseXNA|Any CPU
-		{7366386B-354B-4C86-9259-28CFCEF9807D}.ReleaseXNA|Any CPU.Build.0 = ReleaseXNA|Any CPU
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1471B240-7F24-4A03-A0FD-5E17F1FDFDB3}
 	EndGlobalSection
 EndGlobal

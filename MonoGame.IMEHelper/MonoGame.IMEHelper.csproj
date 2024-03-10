@@ -1,75 +1,102 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework Condition="'$(Configuration)' == 'DebugGL' OR '$(Configuration)' == 'ReleaseGL'">net6.0</TargetFramework>
-        <TargetFrameworks Condition="'$(Configuration)' == 'DebugDX' OR '$(Configuration)' == 'ReleaseDX'">net6.0-windows;net48</TargetFrameworks>
-        <TargetFrameworks Condition="'$(Configuration)' == 'DebugXNA' OR '$(Configuration)' == 'ReleaseXNA'">net6.0-windows;net48</TargetFrameworks>
-        <ImplicitUsings>disable</ImplicitUsings>
-        <LangVersion>10</LangVersion>
-        <Configurations>DebugDX;DebugGL;ReleaseDX;ReleaseGL;DebugXNA;ReleaseXNA</Configurations>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <Platforms>AnyCPU</Platforms>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <Configurations>
+      WindowsDXDebug;WindowsDXRelease;
+      WindowsGLDebug;WindowsGLRelease;
+      WindowsXNADebug;WindowsXNARelease;
+      UniversalGLDebug;UniversalGLRelease
+    </Configurations>
+    <DotnetVersion>net8.0</DotnetVersion>
 
-    <PropertyGroup>
-        <MonoGameFramework Condition="'$(Configuration)' == 'DebugDX' OR '$(Configuration)' == 'ReleaseDX'">WindowsDX</MonoGameFramework>
-        <MonoGameFramework Condition="'$(Configuration)' == 'DebugGL' OR '$(Configuration)' == 'ReleaseGL'">DesktopGL</MonoGameFramework>
-        <MonoGameFramework Condition="'$(Configuration)' == 'DebugXNA' OR '$(Configuration)' == 'ReleaseXNA'">XNA</MonoGameFramework>
-        <MonoGameFramework Condition="'$(MonoGameFramework)' == ''">WindowsDX</MonoGameFramework>
-    </PropertyGroup>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>12</LangVersion>
 
-    <PropertyGroup>
-        <PackageId>MonoGame.IMEHelper.$(MonoGameFramework)</PackageId>
-        <RootNamespace>MonoGame.IMEHelper</RootNamespace>
-        <AssemblyName>MonoGame.IMEHelper</AssemblyName>
-        <PackageVersion>2.0.0</PackageVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-        <Description>This is a netstandard package with IME implementation of Windows, MacOS and Linux with SDL2.</Description>
-        <PackageTags>monogame;</PackageTags>
-        <PackageProjectUrl>https://gitlab.com/starry-orbit-studio/extreme-starry/client/MonoGame.IMEHelper.git</PackageProjectUrl>
-        <RepositoryUrl>https://gitlab.com/starry-orbit-studio/extreme-starry/client/MonoGame.IMEHelper.git</RepositoryUrl>
-        <Authors>frg2089 &amp; ryancheung</Authors>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks Condition="!$(Configuration.Contains(Windows))">$(DotnetVersion)</TargetFrameworks>
+    <TargetFrameworks Condition="$(Configuration.Contains(Windows))">$(DotnetVersion)-windows;net48</TargetFrameworks>
 
-    <PropertyGroup>
-        <UseWindowsForms Condition="'$(MonoGameFramework)' == 'WindowsDX'">true</UseWindowsForms>
-        <UseWindowsForms Condition="'$(MonoGameFramework)' == 'XNA'">true</UseWindowsForms>
-        <DefineConstants Condition="'$(MonoGameFramework)' == 'WindowsDX'">$(DefineConstants);WINDOWSDX</DefineConstants>
-        <DefineConstants Condition="'$(MonoGameFramework)' == 'DesktopGL'">$(DefineConstants);DESKTOPGL</DefineConstants>
-        <DefineConstants Condition="'$(MonoGameFramework)' == 'XNA'">$(DefineConstants);XNA</DefineConstants>
-    </PropertyGroup>
+    <ClientConfiguration Condition="$(Configuration.Contains(Debug))">Debug</ClientConfiguration>
+    <ClientConfiguration Condition="$(Configuration.Contains(Release))">Release</ClientConfiguration>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'DebugXNA' OR '$(Configuration)' == 'ReleaseXNA' ">
-        <PlatformTarget>x86</PlatformTarget>
-        <Prefer32bit>true</Prefer32bit>
-    </PropertyGroup>
+    <Engine Condition="$(Configuration.Contains(WindowsDX))">WindowsDX</Engine>
+    <Engine Condition="$(Configuration.Contains(WindowsGL))">WindowsGL</Engine>
+    <Engine Condition="$(Configuration.Contains(WindowsXNA))">WindowsXNA</Engine>
+    <Engine Condition="$(Configuration.Contains(UniversalGL))">UniversalGL</Engine>
 
-    <ItemGroup>
-        <Compile Remove="DesktopGL\*.cs" Condition="'$(MonoGameFramework)' == 'XNA'" />
-        <Compile Remove="DesktopGL\*.cs" Condition="'$(MonoGameFramework)' == 'WindowsDX'" />
-        <Compile Remove="WindowsDX\*.cs" Condition="'$(MonoGameFramework)' == 'DesktopGL'" />
-    </ItemGroup>
+    <MonoGameFramework Condition="$(Configuration.Contains(DX))">WindowsDX</MonoGameFramework>
+    <MonoGameFramework Condition="$(Configuration.Contains(GL))">DesktopGL</MonoGameFramework>
+    <MonoGameFramework Condition="$(Configuration.Contains(XNA))">XNA</MonoGameFramework>
 
-    <ItemGroup Condition="'$(MonoGameFramework)' != 'XNA'">
-        <PackageReference Include="MonoGame.Framework.$(MonoGameFramework)">
-            <Version Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">3.8.0.1641</Version>
-            <Version Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">3.8.1.303</Version>
-        </PackageReference>
-    </ItemGroup>
+    <UseWindowsForms Condition="$(Configuration.Contains(Windows))">true</UseWindowsForms>
 
-    <ItemGroup Condition="'$(MonoGameFramework)' == 'XNA'">
-        <Reference Include="Microsoft.Xna.Framework">
-            <HintPath>..\References\XNA\Microsoft.Xna.Framework.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Xna.Framework.Game">
-            <HintPath>..\References\XNA\Microsoft.Xna.Framework.Game.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Xna.Framework.Graphics">
-            <HintPath>..\References\XNA\Microsoft.Xna.Framework.Graphics.dll</HintPath>
-        </Reference>
-    </ItemGroup>
+    <DefineConstants>$(DefineConstants);$(Engine.ToUpperInvariant())</DefineConstants>
+
+    <Platforms>AnyCPU;x86</Platforms>
+  </PropertyGroup>
+
+  <!-- Output Path Hack -->
+  <PropertyGroup>
+    <OutputPath Condition="'$(ClientConfiguration)' != ''">$(BaseOutputPath)bin\$(ClientConfiguration)\$(Engine)\</OutputPath>
+    <IntermediateOutputPath Condition="'$(ClientConfiguration)' != ''">$(BaseIntermediateOutputPath)obj\$(ClientConfiguration)\$(Engine)\</IntermediateOutputPath>
+    <ArtifactsPivots>$(ClientConfiguration)\$(Engine)\$(TargetFramework)</ArtifactsPivots>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Shimakaze.MonoGame.IMEHelper.$(Engine)</PackageId>
+    <PackageId Condition="'$(ClientConfiguration)' == 'Debug'">$(PackageId).Debug</PackageId>
+    <RootNamespace>MonoGame.IMEHelper</RootNamespace>
+    <AssemblyName>MonoGame.IMEHelper</AssemblyName>
+    <PackageVersion>0.1.0</PackageVersion>
+    <Description>This is a netstandard package with IME implementation of Windows, MacOS and Linux with SDL2.</Description>
+    <PackageTags>monogame;</PackageTags>
+    <PackageProjectUrl>https://github.com/ShimakazeProject/MonoGame.IMEHelper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ShimakazeProject/MonoGame.IMEHelpergit</RepositoryUrl>
+    <Authors>frg2089 &amp; ryancheung</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(UseWindowsForms)' == 'true'">
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.49-beta">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Polyfill -->
+  <ItemGroup Condition="$(TargetFrameworkIdentifier) == '.NETFramework'">
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="SDL2\*.cs" Condition="'$(UseWindowsForms)' == 'true'" />
+    <Compile Remove="WinForms\*.cs" Condition="'$(UseWindowsForms)' != 'true'" />
+    <None Include="SDL2\*.cs" Condition="'$(UseWindowsForms)' == 'true'" />
+    <None Include="WinForms\*.cs" Condition="'$(UseWindowsForms)' != 'true'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(MonoGameFramework)' != 'XNA'">
+    <PackageReference Include="MonoGame.Framework.$(MonoGameFramework)">
+      <Version Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">3.8.0.1641</Version>
+      <Version Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">3.8.1.303</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(MonoGameFramework)' == 'XNA'">
+    <Reference Include="Microsoft.Xna.Framework">
+      <HintPath>$(XnaFrameworkPath)\Microsoft.Xna.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game">
+      <HintPath>$(XnaFrameworkPath)\Microsoft.Xna.Framework.Game.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Graphics">
+      <HintPath>$(XnaFrameworkPath)\Microsoft.Xna.Framework.Graphics.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>

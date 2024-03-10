@@ -1,11 +1,11 @@
 namespace MonoGame.IMEHelper;
 
-public struct CandidateList
+public class CandidateList
 {
     /// <summary>
     /// Array of the candidates
     /// </summary>
-    public string[] Candidates;
+    public string?[] Candidates = [];
 
     /// <summary>
     /// First candidate index of current page

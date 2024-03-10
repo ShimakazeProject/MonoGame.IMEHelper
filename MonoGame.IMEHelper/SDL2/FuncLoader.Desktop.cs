@@ -18,34 +18,25 @@ internal class FuncLoader
     private static class Linux
     {
 #pragma warning disable CA2101
-        // ReSharper disable IdentifierTypo
-        // ReSharper disable StringLiteralTypo
         [DllImport("libdl.so.2")]
         public static extern IntPtr dlopen(string path, int flags);
 
         [DllImport("libdl.so.2")]
         public static extern IntPtr dlsym(IntPtr handle, string symbol);
-        // ReSharper restore StringLiteralTypo
-        // ReSharper restore IdentifierTypo
 #pragma warning restore CA2101
     }
 
-    // ReSharper disable once InconsistentNaming
     private static class OSX
     {
 #pragma warning disable CA2101
-        // ReSharper disable IdentifierTypo
         [DllImport("/usr/lib/libSystem.dylib")]
         public static extern IntPtr dlopen(string path, int flags);
 
         [DllImport("/usr/lib/libSystem.dylib")]
         public static extern IntPtr dlsym(IntPtr handle, string symbol);
-        // ReSharper restore IdentifierTypo
 #pragma warning restore CA2101
     }
 
-    // ReSharper disable once IdentifierTypo
-    // ReSharper disable once InconsistentNaming
     private const int RTLD_LAZY = 0x0001;
 
     public static IntPtr LoadLibraryExt(string libName)

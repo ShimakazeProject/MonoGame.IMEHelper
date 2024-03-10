@@ -4,16 +4,21 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.Globalization;
+using Windows.Win32.UI.Input.Ime;
+using Windows.Win32.UI.TextServices;
+
 namespace MonoGame.IMEHelper;
 
 /// <summary>
-/// Native window class that handles IME.
+/// Native window class that Handles IME.
 /// </summary>
 internal sealed class IMENativeWindow : NativeWindow, IDisposable
 {
     private readonly WinFormsIMEHandler _imeHandler;
 
-    // ReSharper disable IdentifierTypo
     private readonly IMMCompositionString
         _compstr,
         _compclause,
@@ -27,71 +32,67 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
         _resreadclause;
 
     private readonly IMMCompositionInt _compcurpos;
-    // ReSharper restore IdentifierTypo
 
     private bool _disposed;
-    private readonly bool _showIMEWin;
 
-    private IntPtr _context;
+    private HIMC _context;
 
     /// <summary>
     /// Gets the state if the IME should be enabled
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public bool IsEnabled { get; private set; }
 
-    // ReSharper disable once MemberCanBePrivate.Global
     public bool IsIMEOpen { get; private set; }
 
     /// <summary>
     /// Composition String
     /// </summary>
-    public string CompositionString { get { return _compstr.ToString(); } }
+    public string CompositionString => _compstr.ToString();
 
     /// <summary>
     /// Composition Clause
     /// </summary>
-    public string CompositionClause { get { return _compclause.ToString(); } }
+    public string CompositionClause => _compclause.ToString();
 
     /// <summary>
     /// Composition String Reads
     /// </summary>
-    public string CompositionReadString { get { return _compread.ToString(); } }
+    public string CompositionReadString => _compread.ToString();
 
     /// <summary>
     /// Composition Clause Reads
     /// </summary>
-    public string CompositionReadClause { get { return _compreadclause.ToString(); } }
+    public string CompositionReadClause => _compreadclause.ToString();
 
     /// <summary>
     /// Result String
     /// </summary>
-    public string ResultString { get { return _resstr.ToString(); } }
+    public string ResultString => _resstr.ToString();
 
     /// <summary>
     /// Result Clause
     /// </summary>
-    public string ResultClause { get { return _resclause.ToString(); } }
+    public string ResultClause => _resclause.ToString();
 
     /// <summary>
     /// Result String Reads
     /// </summary>
-    public string ResultReadString { get { return _resread.ToString(); } }
+    public string ResultReadString => _resread.ToString();
 
     /// <summary>
     /// Result Clause Reads
     /// </summary>
-    public string ResultReadClause { get { return _resreadclause.ToString(); } }
+    public string ResultReadClause => _resreadclause.ToString();
 
     /// <summary>
     /// Caret position of the composition
     /// </summary>
-    public int CompositionCursorPos { get { return _compcurpos.Value; } }
+    public int CompositionCursorPos => _compcurpos.Value;
 
     /// <summary>
     /// Array of the candidates
     /// </summary>
-    public string[] Candidates { get; private set; }
+    public string?[] Candidates { get; private set; }
 
     /// <summary>
     /// First candidate index of current page
@@ -113,47 +114,38 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
     /// </summary>
     /// <param name="index">Character Index</param>
     /// <returns>Composition Attribute</returns>
-    public CompositionAttributes GetCompositionAttr(int index)
-    {
-        return (CompositionAttributes)_compattr[index];
-    }
+    public CompositionAttributes GetCompositionAttr(int index) => (CompositionAttributes)_compattr[index];
 
     /// <summary>
     /// Get the composition read attribute at character index.
     /// </summary>
     /// <param name="index">Character Index</param>
     /// <returns>Composition Attribute</returns>
-    public CompositionAttributes GetCompositionReadAttr(int index)
-    {
-        return (CompositionAttributes)_compreadattr[index];
-    }
+    public CompositionAttributes GetCompositionReadAttr(int index) => (CompositionAttributes)_compreadattr[index];
 
     /// <summary>
     /// Constructor, must be called when the window create.
     /// </summary>
     /// <param name="imeHandler"></param>
-    /// <param name="handle">Handle of the window</param>
-    /// <param name="showDefaultIMEWindow">True if you want to display the default IME window</param>
-    internal IMENativeWindow(WinFormsIMEHandler imeHandler, IntPtr handle, bool showDefaultIMEWindow = false)
+    /// <param name="hwnd">Handle of the window</param>
+    internal IMENativeWindow(WinFormsIMEHandler imeHandler, HWND hwnd)
     {
-        this._imeHandler = imeHandler;
+        _imeHandler = imeHandler;
 
-        this._context = IntPtr.Zero;
-        this.Candidates = Array.Empty<string>();
-        this._compcurpos = new IMMCompositionInt(IMM.GCSCursorPos);
-        this._compstr = new IMMCompositionString(IMM.GCSCompStr);
-        this._compclause = new IMMCompositionString(IMM.GCSCompClause);
-        this._compattr = new IMMCompositionString(IMM.GCSCompAttr);
-        this._compread = new IMMCompositionString(IMM.GCSCompReadStr);
-        this._compreadclause = new IMMCompositionString(IMM.GCSCompReadClause);
-        this._compreadattr = new IMMCompositionString(IMM.GCSCompReadAttr);
-        this._resstr = new IMMCompositionString(IMM.GCSResultStr);
-        this._resclause = new IMMCompositionString(IMM.GCSResultClause);
-        this._resread = new IMMCompositionString(IMM.GCSResultReadStr);
-        this._resreadclause = new IMMCompositionString(IMM.GCSResultReadClause);
-        this._showIMEWin = showDefaultIMEWindow;
+        Candidates = [];
+        _compcurpos = new IMMCompositionInt(IME_COMPOSITION_STRING.GCS_CURSORPOS);
+        _compstr = new IMMCompositionString(IME_COMPOSITION_STRING.GCS_COMPSTR);
+        _compclause = new IMMCompositionString(IME_COMPOSITION_STRING.GCS_COMPREADCLAUSE);
+        _compattr = new IMMCompositionString(IME_COMPOSITION_STRING.GCS_COMPATTR);
+        _compread = new IMMCompositionString(IME_COMPOSITION_STRING.GCS_COMPREADSTR);
+        _compreadclause = new IMMCompositionString(IME_COMPOSITION_STRING.GCS_COMPREADCLAUSE);
+        _compreadattr = new IMMCompositionString(IME_COMPOSITION_STRING.GCS_COMPREADATTR);
+        _resstr = new IMMCompositionString(IME_COMPOSITION_STRING.GCS_RESULTSTR);
+        _resclause = new IMMCompositionString(IME_COMPOSITION_STRING.GCS_RESULTCLAUSE);
+        _resread = new IMMCompositionString(IME_COMPOSITION_STRING.GCS_RESULTREADSTR);
+        _resreadclause = new IMMCompositionString(IME_COMPOSITION_STRING.GCS_RESULTREADCLAUSE);
 
-        AssignHandle(handle);
+        AssignHandle(hwnd);
     }
 
     /// <summary>
@@ -163,19 +155,19 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
     {
         IsEnabled = true;
 
-        IMM.DestroyCaret();
-        IMM.CreateCaret(Handle, IntPtr.Zero, 1, 1);
+        PInvoke.DestroyCaret();
+        PInvoke.CreateCaret((HWND)Handle, null, 1, 1);
 
-        _context = IMM.ImmGetContext(Handle);
+        _context = PInvoke.ImmGetContext((HWND)Handle);
         if (_context != IntPtr.Zero)
         {
-            IMM.ImmAssociateContext(Handle, _context);
-            IMM.ImmReleaseContext(Handle, _context);
+            PInvoke.ImmAssociateContext((HWND)Handle, _context);
+            PInvoke.ImmReleaseContext((HWND)Handle, _context);
             return;
         }
 
         // This fix _context is 0 on fullscreen mode.
-        ImeContext.Enable(Handle);
+        ImeContext.Enable((HWND)Handle);
     }
 
     /// <summary>
@@ -185,20 +177,34 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
     {
         IsEnabled = false;
 
-        IMM.DestroyCaret();
+        PInvoke.DestroyCaret();
 
-        IMM.ImmAssociateContext(Handle, IntPtr.Zero);
+        PInvoke.ImmAssociateContext((HWND)Handle, default);
+
+        ImeContext.Disable((HWND)Handle);
     }
 
     public void SetTextInputRect(ref Rectangle rect)
     {
-        _context = IMM.ImmGetContext(Handle);
+        _context = PInvoke.ImmGetContext((HWND)Handle);
 
-        var candidateForm = new IMM.CandidateForm(new IMM.Point(rect.X, rect.Y));
-        IMM.ImmSetCandidateWindow(_context, ref candidateForm);
-        IMM.SetCaretPos(rect.X, rect.Y);
+        CANDIDATEFORM candidateForm = new()
+        {
+            dwIndex = 0,
+            dwStyle = PInvoke.CFS_CANDIDATEPOS,
+            ptCurrentPos =
+            {
+                X = rect.X,
+                Y = rect.Y,
+            },
+            rcArea = new(),
+        };
 
-        IMM.ImmReleaseContext(Handle, _context);
+        //var candidateForm = new CANDIDATEFORM(new PInvoke.Point(rect.X, rect.Y));
+        PInvoke.ImmSetCandidateWindow(_context, candidateForm);
+        PInvoke.SetCaretPos(rect.X, rect.Y);
+
+        PInvoke.ImmReleaseContext((HWND)Handle, _context);
     }
 
     /// <summary>
@@ -215,39 +221,35 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
 
     protected override void WndProc(ref Message msg)
     {
-        switch (msg.Msg)
+        switch ((uint)msg.Msg)
         {
-            case IMM.ImeSetContext:
+            case PInvoke.WM_IME_SETCONTEXT:
                 if (msg.WParam.ToInt32() == 1)
                 {
                     if (IsEnabled)
                         EnableIME();
-                    if (!_showIMEWin)
-                        msg.LParam = (IntPtr)0;
                 }
 
                 break;
-            case IMM.InputLanguageChange:
+            case PInvoke.WM_INPUTLANGCHANGE:
                 return;
-            case IMM.ImeNotify:
-                IMENotify(msg.WParam.ToInt32());
-                if (!_showIMEWin) return;
+            case PInvoke.WM_IME_NOTIFY:
+                IMENotify((uint)msg.WParam);
                 break;
-            case IMM.ImeStartComposition:
+            case PInvoke.WM_IME_STARTCOMPOSITION:
                 IMEStartComposition();
                 return;
-            case IMM.ImeComposition:
+            case PInvoke.WM_IME_COMPOSITION:
                 IMESetContextForAll();
-                IMEComposition(msg.LParam.ToInt32());
-                IMM.ImmReleaseContext(Handle, _context);
+                IMEComposition((IME_COMPOSITION_STRING)msg.LParam);
+                PInvoke.ImmReleaseContext((HWND)Handle, _context);
                 break;
-            case IMM.ImeEndComposition:
+            case PInvoke.WM_IME_ENDCOMPOSITION:
                 IMESetContextForAll();
-                IMEEndComposition(msg.LParam.ToInt32());
-                IMM.ImmReleaseContext(Handle, _context);
-                if (!_showIMEWin) return;
+                IMEEndComposition((IME_COMPOSITION_STRING)msg.LParam);
+                PInvoke.ImmReleaseContext((HWND)Handle, _context);
                 break;
-            case IMM.Char:
+            case PInvoke.WM_IME_CHAR:
                 CharEvent(msg.WParam.ToInt32());
                 break;
         }
@@ -277,7 +279,7 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
 
     private void IMESetContextForAll()
     {
-        _context = IMM.ImmGetContext(Handle);
+        _context = PInvoke.ImmGetContext((HWND)Handle);
 
         _compcurpos.IMEHandle = _context;
         _compstr.IMEHandle = _context;
@@ -292,50 +294,49 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
         _resreadclause.IMEHandle = _context;
     }
 
-    private void IMENotify(int wParam)
+    private void IMENotify(uint wParam)
     {
         switch (wParam)
         {
-            case IMM.ImnSetOpenStatus:
-                _context = IMM.ImmGetContext(Handle);
-                IsIMEOpen = IMM.ImmGetOpenStatus(_context);
+            case PInvoke.IMN_SETOPENSTATUS:
+                _context = PInvoke.ImmGetContext((HWND)Handle);
+                IsIMEOpen = PInvoke.ImmGetOpenStatus(_context);
                 System.Diagnostics.Trace.WriteLine($"IsIMEOpen: {IsIMEOpen}");
                 break;
-            case IMM.ImnOpenCandidate:
-            case IMM.ImnChangeCandidate:
+            case PInvoke.IMN_OPENCANDIDATE:
+            case PInvoke.IMN_CHANGECANDIDATE:
                 IMEChangeCandidate();
                 break;
-            case IMM.ImnCloseCandidate:
+            case PInvoke.IMN_CLOSECANDIDATE:
                 IMECloseCandidate();
                 break;
-            case IMM.ImnPrivate:
+            case PInvoke.IMN_PRIVATE:
                 break;
         }
     }
 
-    private void IMEChangeCandidate()
+    private unsafe void IMEChangeCandidate()
     {
-        _context = IMM.ImmGetContext(Handle);
+        _context = PInvoke.ImmGetContext((HWND)Handle);
 
-        uint length = IMM.ImmGetCandidateList(_context, 0, IntPtr.Zero, 0);
+        CANDIDATELIST candiDataList = new();
+        CANDIDATELIST* pCandiDataList = &candiDataList;
+
+        uint length = PInvoke.ImmGetCandidateList(_context, 0, pCandiDataList, 0);
         if (length > 0)
         {
-            IntPtr pointer = Marshal.AllocHGlobal((int)length);
-            _ = IMM.ImmGetCandidateList(_context, 0, pointer, length);
-            IMM.CandidateList cList =
-                (IMM.CandidateList)Marshal.PtrToStructure(pointer, typeof(IMM.CandidateList))!;
+            CandidatesSelection = candiDataList.dwSelection;
+            CandidatesPageStart = candiDataList.dwPageStart;
+            CandidatesPageSize = candiDataList.dwPageSize;
 
-            CandidatesSelection = cList.dwSelection;
-            CandidatesPageStart = cList.dwPageStart;
-            CandidatesPageSize = cList.dwPageSize;
-
-            if (cList.dwCount > 1)
+            if (candiDataList.dwCount > 1)
             {
-                Candidates = new string[cList.dwCount];
-                for (int i = 0; i < cList.dwCount; i++)
+                Candidates = new string?[candiDataList.dwCount];
+
+                for (int i = 0; i < candiDataList.dwCount; i++)
                 {
-                    int sOffset = Marshal.ReadInt32(pointer, 24 + 4 * i);
-                    Candidates[i] = Marshal.PtrToStringUni(pointer + sOffset)!;
+                    uint sOffset = candiDataList.dwOffset[i];
+                    Candidates[i] = Marshal.PtrToStringUni((nint)(pCandiDataList + sOffset));
                 }
 
                 _imeHandler.OnTextComposition(CompositionString, CompositionCursorPos,
@@ -349,17 +350,15 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
             }
             else
                 IMECloseCandidate();
-
-            Marshal.FreeHGlobal(pointer);
         }
 
-        IMM.ImmReleaseContext(Handle, _context);
+        PInvoke.ImmReleaseContext((HWND)Handle, _context);
     }
 
     private void IMECloseCandidate()
     {
         CandidatesSelection = CandidatesPageStart = CandidatesPageSize = 0;
-        Candidates = Array.Empty<string>();
+        Candidates = [];
 
         _imeHandler.OnTextComposition(CompositionString, CompositionCursorPos);
     }
@@ -372,7 +371,7 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
         _imeHandler.OnTextComposition(string.Empty, 0);
     }
 
-    private void IMEComposition(int lParam)
+    private void IMEComposition(IME_COMPOSITION_STRING lParam)
     {
         if (!_compstr.Update(lParam))
             return;
@@ -387,7 +386,7 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
         _imeHandler.OnTextComposition(CompositionString, CompositionCursorPos);
     }
 
-    private void IMEEndComposition(int lParam)
+    private void IMEEndComposition(IME_COMPOSITION_STRING lParam)
     {
         ClearComposition();
 
@@ -407,8 +406,7 @@ internal sealed class IMENativeWindow : NativeWindow, IDisposable
 
         var key = Microsoft.Xna.Framework.Input.Keys.None;
         if (!char.IsSurrogate(charInput))
-            key = (Microsoft.Xna.Framework.Input.Keys)(IMM.VkKeyScanEx(charInput,
-                InputLanguage.CurrentInputLanguage.Handle) & 0xff);
+            key = (Microsoft.Xna.Framework.Input.Keys)(PInvoke.VkKeyScanEx(charInput, (HKL)InputLanguage.CurrentInputLanguage.Handle) & 0xff);
 
         _imeHandler.OnTextInput(charInput, key);
 

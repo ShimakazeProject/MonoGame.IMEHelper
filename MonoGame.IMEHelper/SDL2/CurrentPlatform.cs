@@ -11,7 +11,6 @@ internal static class CurrentPlatform
 {
     private static OS? s_os;
 
-    // ReSharper disable once StringLiteralTypo
     [DllImport("libc")]
     private static extern int uname(IntPtr buf);
 
@@ -61,7 +60,6 @@ internal static class CurrentPlatform
         }
     }
 
-    // ReSharper disable once InconsistentNaming
     public static OS OS => s_os ??= Init();
 
     public static string Rid => OS switch

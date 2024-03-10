@@ -9,7 +9,6 @@ public abstract class IMEHandler
 {
     private static IMEHandler? s_implInstance;
 
-    // ReSharper disable once UnusedMember.Global
     public static IMEHandler? ImplInstance
     {
         get
@@ -34,17 +33,10 @@ public abstract class IMEHandler
     /// </summary>
     protected Game GameInstance { get; }
 
-    // ReSharper disable once MemberCanBePrivate.Global
-    // ReSharper disable once UnusedAutoPropertyAccessor.Global
-    // ReSharper disable once MemberCanBeProtected.Global
-    public bool ShowDefaultIMEWindow { get; private set; }
-
-    protected IMEHandler(Game game, bool showDefaultIMEWindow = false)
+    protected IMEHandler(Game game)
     {
-        this.GameInstance = game;
-        this.ShowDefaultIMEWindow = showDefaultIMEWindow;
+        GameInstance = game;
 
-        // ReSharper disable once VirtualMemberCallInConstructor
         PlatformInitialize();
     }
 
@@ -74,7 +66,6 @@ public abstract class IMEHandler
     /// <seealso cref="TextComposition" />
     public abstract void StopTextComposition();
 
-    // ReSharper disable once CommentTypo
     /// <summary>
     /// Use this function to set the rectangle used to type Unicode text inputs if IME supported.
     /// In SDL2, this method call gives the OS a hint for where to show the candidate text list,
@@ -85,92 +76,86 @@ public abstract class IMEHandler
     /// <summary>
     /// Array of the candidates
     /// </summary>
-    public virtual string[]? Candidates { get { return null; } }
+    public virtual string?[] Candidates => [];
 
     /// <summary>
     /// How many candidates should display per page
     /// </summary>
-    public virtual uint CandidatesPageSize { get { return 0; } }
+    public virtual uint CandidatesPageSize => 0;
 
     /// <summary>
     /// First candidate index of current page
     /// </summary>
-    public virtual uint CandidatesPageStart { get { return 0; } }
+    public virtual uint CandidatesPageStart => 0;
 
     /// <summary>
     /// The selected candidate index
     /// </summary>
-    public virtual uint CandidatesSelection { get { return 0; } }
+    public virtual uint CandidatesSelection => 0;
 
     /// <summary>
     /// Composition String
     /// </summary>
-    public virtual string Composition { get { return string.Empty; } }
+    public virtual string Composition => string.Empty;
 
     /// <summary>
     /// Composition Clause
     /// </summary>
-    public virtual string CompositionClause { get { return string.Empty; } }
+    public virtual string CompositionClause => string.Empty;
 
     /// <summary>
     /// Composition Reading String
     /// </summary>
-    public virtual string CompositionRead { get { return string.Empty; } }
+    public virtual string CompositionRead => string.Empty;
 
     /// <summary>
     /// Composition Reading Clause
     /// </summary>
-    public virtual string CompositionReadClause { get { return string.Empty; } }
+    public virtual string CompositionReadClause => string.Empty;
 
     /// <summary>
     /// Caret position of the composition
     /// </summary>
-    public virtual int CompositionCursorPos { get { return 0; } }
+    public virtual int CompositionCursorPos => 0;
 
     /// <summary>
     /// Result String
     /// </summary>
-    public virtual string Result { get { return string.Empty; } }
+    public virtual string Result => string.Empty;
 
     /// <summary>
     /// Result Clause
     /// </summary>
-    public virtual string ResultClause { get { return string.Empty; } }
+    public virtual string ResultClause => string.Empty;
 
     /// <summary>
     /// Result Reading String
     /// </summary>
-    public virtual string ResultRead { get { return string.Empty; } }
+    public virtual string ResultRead => string.Empty;
 
     /// <summary>
     /// Result Reading Clause
     /// </summary>
-    public virtual string ResultReadClause { get { return string.Empty; } }
+    public virtual string ResultReadClause => string.Empty;
 
     /// <summary>
     /// Position Y of virtual keyboard, for mobile platforms has virtual keyboard.
     /// </summary>
-    public virtual int VirtualKeyboardHeight { get { return 0; } }
+    public virtual int VirtualKeyboardHeight => 0;
 
     /// <summary>
     /// Get the composition attribute at character index.
     /// </summary>
     /// <param name="charIndex">Character Index</param>
     /// <returns>Composition Attribute</returns>
-    public virtual CompositionAttributes GetCompositionAttr(int charIndex)
-    {
-        return CompositionAttributes.Input;
-    }
+    public virtual CompositionAttributes GetCompositionAttr(int charIndex) => CompositionAttributes.Input;
 
     /// <summary>
     /// Get the composition read attribute at character index.
     /// </summary>
     /// <param name="charIndex">Character Index</param>
     /// <returns>Composition Attribute</returns>
-    public virtual CompositionAttributes GetCompositionReadAttr(int charIndex)
-    {
-        return CompositionAttributes.Input;
-    }
+    public virtual CompositionAttributes GetCompositionReadAttr(int charIndex) => CompositionAttributes.Input;
 
     /// <summary>
     /// Invoked when the IMM service is enabled and a character composition is changed.
@@ -186,10 +171,7 @@ public abstract class IMEHandler
     /// <param name="cursorPosition"></param>
     /// <param name="candidateList"></param>
     public virtual void OnTextComposition(string compString, int cursorPosition,
-        CandidateList? candidateList = null)
-    {
-        TextComposition?.Invoke(this, new TextCompositionEventArgs(compString, cursorPosition, candidateList));
-    }
+        CandidateList? candidateList = null) => TextComposition?.Invoke(this, new TextCompositionEventArgs(compString, cursorPosition, candidateList));
 
     /// <summary>
     /// Invoked when the IMM service emit character input event.
@@ -203,19 +185,12 @@ public abstract class IMEHandler
     /// </summary>
     /// <param name="character"></param>
     /// <param name="key"></param>
-    public virtual void OnTextInput(char character, Keys key = Keys.None)
-    {
-        TextInput?.Invoke(this, new TextInputEventArgs(character, key));
-    }
+    public virtual void OnTextInput(char character, Keys key = Keys.None) => TextInput?.Invoke(this, new TextInputEventArgs(character, key));
 
     /// <summary>
     /// Redirect a sdl text input event.
     /// </summary>
-    // ReSharper disable once MemberCanBeProtected.Global
-    public virtual void OnTextInput(TextInputEventArgs args)
-    {
-        TextInput?.Invoke(this, args);
-    }
+    public virtual void OnTextInput(TextInputEventArgs args) => TextInput?.Invoke(this, args);
 
     public virtual void Update(GameTime gameTime)
     {
